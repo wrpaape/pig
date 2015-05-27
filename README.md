@@ -1,13 +1,13 @@
 This folder structure should be suitable for starting a project that uses a database:
 
-* Clone the repo
-* `rake generate:migration <Name>` to create a migration
-* `rake db:migrate` to run it
-* Create models
+* Fork this repo
+* Clone this repo
+* `rake generate:migration <NAME>` to create a migration (Don't include the `<` `>` in your name, it should also start with a capital)
+* `rake db:migrate` to run the migration and update the database
+* Create models in lib that subclass `ActiveRecord::Base`
 * ... ?
 * Profit
 
-You may need to fiddle around with remotes assuming that you don't want to push to this one (which you probably don't).
 
 ## Rundown
 
