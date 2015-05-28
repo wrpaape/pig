@@ -1,4 +1,4 @@
-require_relative './hog'
+require_relative './pig'
 
 class Hog < Pig
   def take_turn player

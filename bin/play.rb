@@ -1,5 +1,7 @@
+require_relative '../db/setup'
 require_relative '../lib/pig'
 require_relative '../lib/hog'
+require_relative '../lib/leaderboard'
 
 def select_from(hash)
   loop do
@@ -31,5 +33,6 @@ game = game_class.new
 
 game.get_players
 
-game.play_round until game.winner
-puts "#{game.winner} wins!"
+game.play_round until winner_name = game.winner
+puts "#{winner_name} wins!"
+puts Leaderboard.find_by(player_name: winner_name).inspect
