@@ -1,3 +1,19 @@
+# Game of Pig
+
+
+## Setup
+ - run `bundle install`
+
+## How to Play
+ - run `ruby bin/play.rb` to start the game
+
+
+## How to run the tests
+ - run `ruby spec/NAME_OF_TEST.rb` to run a test file
+
+
+
+# Project Structure Readme
 This folder structure should be suitable for starting a project that uses a database:
 
 * Fork this repo
