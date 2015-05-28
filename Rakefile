@@ -17,6 +17,11 @@ namespace :db do
     version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
     ActiveRecord::Migrator.migrate('db/migrate', version)
   end
+  desc "Rollback the database to a previous migration"
+  task :rollback do
+    amount = ARGV[1].to_i
+    ActiveRecord::Migrator.rollback('db/migrate', amount)
+  end
 end
 
 desc "Generate migration"
