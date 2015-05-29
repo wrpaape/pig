@@ -2,6 +2,7 @@ require_relative '../db/setup'
 require_relative '../lib/pig'
 require_relative '../lib/hog'
 require_relative '../lib/leaderboard'
+require_relative '../lib/save'
 
 class Play_game
   attr_reader :current_game
@@ -42,7 +43,7 @@ class Play_game
         player_names_joined += player.name + "||"
         player_scores_joined += player.score.to_s + "||"
       end
-      Save.create(player_names: player_names_joined, player_scores: player_scores_joined, game_mode: "#{game_state.class}")
+      Save.create(player_names: player_names_joined, player_scores: player_scores_joined, game_mode: "#{players_state.class}")
       exit
   end
 

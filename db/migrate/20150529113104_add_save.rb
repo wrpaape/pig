@@ -3,7 +3,7 @@ class AddSave < ActiveRecord::Migration
     create_table :saves do |t|
       t.string :game_mode
       t.string :player_names
-      t.integer :player_scores
+      t.string :player_scores
 
       t.timestamps null: false
     end
