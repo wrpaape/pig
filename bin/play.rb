@@ -6,32 +6,31 @@ require_relative '../lib/leaderboard'
 class Play_game
   attr_reader :current_game
   def play!
-        #Pig and Hog are class constants
-    game_classes = {
-      1 => Pig,
-      2 => Hog
-    }
+    begin
+          #Pig and Hog are class constants
+      game_classes = {
+        1 => Pig,
+        2 => Hog
+      }
 
-    disp_header
-    game_class = select_from(game_classes)
+      disp_header
+      game_class = select_from(game_classes)
 
-    puts "Playing a game of #{game_class}"
-    @current_game = game_class.new
-    #       ^ game class is either Pig or Hog. The constant of a class can be assigned to a local variable and be used like any other local variable
+      puts "Playing a game of #{game_class}"
+      @current_game = game_class.new
+      #       ^ game class is either Pig or Hog. The constant of a class can be assigned to a local variable and be used like any other local variable
 
-    @current_game.get_players
+      @current_game.get_players
 
-    while !(winner_name == @current_game.winner) do
-      @current_game.play_round
-      rescue Interrupt => e
-        e.save_and_exit
-      end
+      @current_game.play_round until winner_name = @current_game.winner
+
+      puts "#{winner_name} wins!"
+      update_records(winner_name)
+      print "play again (y/n)? > "
+      exit unless gets.chomp.upcase == "Y"
+      rescue Interrupt
+        save_and_exit
     end
-
-    puts "#{winner_name} wins!"
-    update_records(winner_name)
-    print "play again (y/n)? > "
-    exit unless gets.chomp.upcase == "Y"
   end
 
   def save_and_exit
@@ -39,7 +38,7 @@ class Play_game
       players_state = @current_game.players
       player_names_joined = ""
       player_scores_joined = ""
-      players_state each do |player|
+      players_state.each do |player|
         player_names_joined += player.name + "||"
         player_scores_joined += player.score.to_s + "||"
       end
@@ -77,15 +76,15 @@ class Play_game
     pad = ' ' * (((pad_pig + pad_hog) - '  |__|   \\___/ |__|       |__| |____||___,_| \\___|'.size)/ 2)
 
     puts center_message('', '_') +
-    """
-  #{pad} ______   ___   ____       ____ ____   ____  _____
-  #{pad}|      | /   \\ |    \\     |    \\    | /    |/ ___/
-  #{pad}|      ||     ||  o  )    |  o  )  | |   __(   \\_
-  #{pad}|_|  |_||  O  ||   _/     |   _/|  | |  |  |\\__  |
-  #{pad}  |  |  |     ||  |       |  |  |  | |  |_ |/  \\ |
-  #{pad}  |  |  |     ||  |       |  |  |  | |     |\\    |
-  #{pad}  |__|   \\___/ |__|       |__| |____||___,_| \\___|
-    """
+"""
+#{pad} ______   ___   ____       ____ ____   ____  _____
+#{pad}|      | /   \\ |    \\     |    \\    | /    |/ ___/
+#{pad}|      ||     ||  o  )    |  o  )  | |   __(   \\_
+#{pad}|_|  |_||  O  ||   _/     |   _/|  | |  |  |\\__  |
+#{pad}  |  |  |     ||  |       |  |  |  | |  |_ |/  \\ |
+#{pad}  |  |  |     ||  |       |  |  |  | |     |\\    |
+#{pad}  |__|   \\___/ |__|       |__| |____||___,_| \\___|
+"""
 
     puts " " * ((pad_pig - 3) / 2) + "Pig" + " " * (pad_pig - (" " * ((pad_pig - 3) / 2) + "Pig").size) + " " * ((pad_hog - 3) / 2) + "Hog"
     puts " " * ((pad_pig - 3) / 2) + "¯¯¯" + " " * (pad_pig - (" " * ((pad_pig - 3) / 2) + "¯¯¯").size) + " " * ((pad_hog - 3) / 2) + "¯¯¯"
@@ -147,12 +146,12 @@ class Play_game
     puts ''
     puts center_message('Welcome to...', ' ')
     puts '' +
-    """
-  #{pad} ____  __  ___
-  #{pad}(  _ \\(  )/ __)
-  #{pad} ) __/ )(( (_ \\
-  #{pad}(__)  (__)\\___/
-    """
+"""
+#{pad} ____  __  ___
+#{pad}(  _ \\(  )/ __)
+#{pad} ) __/ )(( (_ \\
+#{pad}(__)  (__)\\___/
+"""
   end
 
   def center_message(message,pad_char)
