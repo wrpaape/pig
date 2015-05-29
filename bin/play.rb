@@ -5,50 +5,55 @@ require_relative '../lib/leaderboard'
 require_relative '../lib/save'
 
 class Play_game
-  attr_reader :current_game
-  def play!
-    begin
-          #Pig and Hog are class constants
-      game_classes = {
-        1 => Pig,
-        2 => Hog
-      }
+  def start_game
+    game_classes = {
+      2 => Pig,
+      3 => Hog
+    }
 
-      disp_header
-      game_class = select_from(game_classes)
+    disp_header
+    game_class = select_from(game_classes)
+    new_game = game_class.new
+    new_game.get_players
 
-      puts "Playing a game of #{game_class}"
-      @current_game = game_class.new
-      #       ^ game class is either Pig or Hog. The constant of a class can be assigned to a local variable and be used like any other local variable
+    play!(new_game)
+  end
 
-      @current_game.get_players
+  def play!(game)
+      begin
+      puts "Playing a game of #{game.class}"
 
-      @current_game.play_round until winner_name = @current_game.winner
+      game.play_round until winner_name = game.winner
 
       puts "#{winner_name} wins!"
       update_records(winner_name)
       print "play again (y/n)? > "
       exit unless gets.chomp.upcase == "Y"
+      start_game
       rescue Interrupt
-        save_and_exit
+        save_and_exit(game)
     end
   end
 
-  def save_and_exit
+  def save_and_exit(game)
       puts "\ngame saved!"
-      players_state = @current_game.players
+      players_state = game.players
       player_names_joined = ""
       player_scores_joined = ""
       players_state.each do |player|
         player_names_joined += player.name + "||"
         player_scores_joined += player.score.to_s + "||"
       end
-      Save.create(player_names: player_names_joined, player_scores: player_scores_joined, game_mode: "#{players_state.class}")
+      range = [*'0'..'9',*'A'..'Z',*'a'..'z']
+      code = Array.new(5){ range.sample }.join
+      Save.create(player_names: player_names_joined, player_scores: player_scores_joined, game_mode: "#{@current_game.class}", load_code: code)
+      puts "Your load code is : '" + code + "' (caps sensitive)"
       exit
   end
 
   def select_from(hash)
     puts "0) Display Leaderboard"
+    puts "1) Load From Save"
     loop do
       hash.each do |key, value|
         puts "#{key}) #{value}"
@@ -58,6 +63,13 @@ class Play_game
       if input.to_i == 0
         disp_leaderboard
         select_from(hash)
+      elsif input.to_i == 1
+        loop do
+          print "Enter your load code: "
+          code = gets.chomp
+          load_game(code) if Save.find_by(load_code: code)
+          puts "Incorrect entry"
+        end
       end
       found = hash.find { |k,v| k.to_s == input || v.to_s == input }
       if found
@@ -66,6 +78,12 @@ class Play_game
         puts "Invalid selection: #{input}. Please try again."
       end
     end
+  end
+
+  def load_game(code)
+    save_data = Save.find_by(load_code: code)
+    resumed_game = save_data.game_mode.new
+
   end
 
   def disp_leaderboard
@@ -178,18 +196,5 @@ class Play_game
 end
 
 
-
-
-
-
-play_game = Play_game.new.play!
-
-
-
-
-
-
-
-
-
+play_game = Play_game.new.start_game
 
