@@ -1,7 +1,7 @@
 require_relative './player'
 
 class Pig
-  attr_reader :players_all
+  attr_reader :players_all, :players
 
   def initialize
     @players   = []
