@@ -1,12 +1,11 @@
 require_relative './player'
 
 class Pig
-  attr_reader :players
+  attr_reader :players_all
 
   def initialize
     @players   = []
     @max_score = 10
-    @leaderboard = Leaderboard.new
   end
 
   def get_players
@@ -15,6 +14,7 @@ class Pig
       print "Player #{@players.count + 1}, what is your name? > "
       input = gets.chomp
       if input == "q" || input == ""
+        @players_all = @players
         return
       else
         @players.push Player.new(input)
@@ -44,11 +44,7 @@ class Pig
 
   def winner
     if @players.length == 1
-      winning_player = @players.first
-      winner_lb_entry = Leaderboard.find_by(player_name: winning_player.name, game_mode: "#{self.class}")
-      winner_lb_entry.num_wins += 1
-      winner_lb_entry.save
-      winning_player.name
+      winner_name = @players.first.name
     end
   end
 
